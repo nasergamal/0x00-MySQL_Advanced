@@ -10,3 +10,5 @@ if __name__ == "__main__":
     for m in method:
         count = logs.count_documents({"method": m})
         print(f'\tmethod {m}: {count}')
+    print(logs.count_documents({"method": "GET", "path": "/status"}),
+          'status check')
