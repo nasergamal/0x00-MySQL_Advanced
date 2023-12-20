@@ -4,10 +4,11 @@ redis Cache
 """
 from functools import wraps
 import redis
+from typing import Union, Callable, Optional
 import uuid
 
 
-def count_calls(method: callable) -> callable:
+def count_calls(method: Callable) -> Callable:
     '''count calls'''
     key = method.__qualname__
 
@@ -22,7 +23,7 @@ def count_calls(method: callable) -> callable:
     return wrapper
 
 
-def call_history(method: callable) -> callable:
+def call_history(method: Callable) -> Callable:
     '''save input and outputs'''
     key = method.__qualname__
 
@@ -38,7 +39,7 @@ def call_history(method: callable) -> callable:
     return wrapper
 
 
-def replay(method: callable):
+def replay(method: Callable):
     '''
     replay method usage
     '''
@@ -65,14 +66,14 @@ class Cache:
 
     @count_calls
     @call_history
-    def store(self, data: (str, bytes, int, float)) -> str:
+    def store(self, data: Union[str, bytes, int, float]) -> str:
         '''store given data into redis with random uuid as the key'''
         uid = str(uuid.uuid4())
         self._redis.set(uid, data)
         return uid
 
-    def get(self, key: str, fn: (callable, None) = None
-            ) -> (str, bytes, int, float):
+    def get(self, key: str, fn: Optional[Callable] = None
+            ) -> Union[str, bytes, int, float]:
         '''get stored data using key and convert data type if prompted'''
         new_key = self._redis.get(key)
         if fn:
