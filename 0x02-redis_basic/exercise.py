@@ -47,8 +47,11 @@ def replay(method: Callable):
     name = method.__qualname__
     inputs = re.lrange(f'{name}:inputs', 0, -1)
     outputs = re.lrange(f'{name}:outputs', 0, -1)
-    count = int(re.get(name))
-    print(f'{name} was called {count} times')
+    try:
+        count = int(re.get(name))
+    except TypeError:
+        count = 0
+    print(f'{name} was called {count} times:')
     for i in zip(inputs, outputs):
         print(f'{name}(*{i[0].decode("utf-8")}) -> {i[1].decode("utf-8")}')
 
